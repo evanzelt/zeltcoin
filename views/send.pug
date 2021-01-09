@@ -1,0 +1,17 @@
+html
+    head
+        title= "Send a ZeltCoin!"
+        script(defer, src='send.js')
+    body
+        form(id="transaction-form")
+            div
+                input(type="text", placeholder="Public Address", name="pubKey")
+            div
+                input(type="text", placeholder="Private Address", name="privKey")
+            div
+                input(type="text", placeholder="Receiving Address", name="recipient")
+            div
+                input(type="number", placeholder="Amount", name="amount")
+            div
+                button(type="submit")= "Submit"
+        div(id="transaction-box")

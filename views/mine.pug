@@ -1,0 +1,8 @@
+html
+    head
+        title= "Mining on Zeltcoin's Blockchain"
+        script(defer, src='mine.js')
+        style
+            include css/main.css
+    body
+        div(id='status-messages')= "Mining on " + ip + "..."

@@ -1,0 +1,11 @@
+html
+    head
+        title= "Generate your Zeltcoin Keyset!"
+        script(defer, src="generate.js")
+    body
+        h2= "Do not share your Private Key with anyone! They will have access to your Zeltcoin balance!"
+        div
+            button(id="generate")= "Generate Key Pair"
+        div
+            div(id="privKey")= "Private Key: "
+            div(id="pubKey")= "Public Key: "
