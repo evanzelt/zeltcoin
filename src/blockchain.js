@@ -1,3 +1,5 @@
+'use-strict'
+
 const sha3 = require('js-sha3');
 const {verifySignature} = require("./ec")
 const fetch = require('node-fetch');
@@ -86,7 +88,7 @@ class Blockchain {
         this.chain = []
         this.pendingTransactions = []
         this.difficulty = 4
-        this.peers = []
+        this.peers = ["111"]
 
         //Genesis Block
         let genesisBlock = new Block(100, 1)
@@ -95,21 +97,27 @@ class Blockchain {
 
         //Get peer list from peers
         this.peers.forEach(e => {
-            fetch("http://" + e + ":5400/peers")
-            .then(response => response.json())
-            .then(peerList => {
-                peerList.forEach(x => this.addPeer(x))
-            })
+            fetch("http://" + e + ":5500/peers")
+                .then(response => response.json())
+                .then(peerList => {
+                    peerList.forEach(x => this.addPeer(x))
+                })
+                .catch(()=>{
+                    console.log("Could not find peer: " + e)
+                })
         })
         
         //Get longest chain in network
         this.peers.forEach(e => {
-            fetch("http://" + e + ":5400/chain")
-            .then(response => response.json())
-            .then(peerChain => {
-                peerChain = this.parseChain(peerChain)
-                this.receiveChain(peerChain, e)
-            })
+            fetch("http://" + e + ":5500/chain")
+                .then(response => response.json())
+                .then(peerChain => {
+                    peerChain = this.parseChain(peerChain)
+                    this.receiveChain(peerChain, e)
+                })
+                .catch(()=>{
+                    console.log("Could not find peer: " + e)
+                })
         })
     }
 

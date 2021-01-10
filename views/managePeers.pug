@@ -1,0 +1,11 @@
+html
+    head
+        title= "Manage Peers"
+        script(defer, src="managePeers.js")
+    body
+        h3= "Current Peers"
+        div(id="peers")
+        div
+            input(type="text", id="newPeer", placeholder="New Peer IP")
+        div
+            button(id="peerButton")= "Add Peer"

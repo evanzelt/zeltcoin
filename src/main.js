@@ -23,7 +23,7 @@ for (var dev in ifaces) {
     ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address: undefined);
 }
 
-app.use(express.static('client'))
+app.use(express.static('src/build'))
 
 app.get("/", (req, res) => {
     res.send(`Blockchain Node hosted at ${address}`)
@@ -74,6 +74,10 @@ app.get("/peers", (req, res) => {
 app.post("/addPeer", (req, res) => {
     let peer = req.body["peer"]
     zeltCoin.addPeer(peer)
+})
+
+app.get("/managePeers", (req, res) => {
+    res.render("managePeers")
 })
 
 app.get("/generate", (req, res) => {
