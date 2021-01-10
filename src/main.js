@@ -51,7 +51,7 @@ app.post("/makeTransaction", (req, res) => {
 })
 
 app.get("/mine", (req, res) => {
-    zeltCoin.mine(pubKey)
+    zeltCoin.mine('031a87d27158955effe3bd4e9ef7d63a8210397709dbdf444eb5107006a63310ea')
     res.render('mine', {ip: address})
 })
 
