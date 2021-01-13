@@ -72,8 +72,12 @@ app.get("/peers", (req, res) => {
 })
 
 app.post("/addPeer", (req, res) => {
+    console.log(req.body)
     let peer = req.body["peer"]
-    zeltCoin.addPeer(peer)
+    if(peer) {
+        zeltCoin.addPeer(peer)
+    }
+    res.send(zeltCoin.peers)
 })
 
 app.get("/managePeers", (req, res) => {

@@ -1,5 +1,3 @@
-'use-strict'
-
 const sha3 = require('js-sha3');
 const {verifySignature} = require("./ec")
 const fetch = require('node-fetch');
@@ -88,7 +86,7 @@ class Blockchain {
         this.chain = []
         this.pendingTransactions = []
         this.difficulty = 4
-        this.peers = ["111"]
+        this.peers = ["192.168.1.236"]
 
         //Genesis Block
         let genesisBlock = new Block(100, 1)
@@ -101,24 +99,31 @@ class Blockchain {
                 .then(response => response.json())
                 .then(peerList => {
                     peerList.forEach(x => this.addPeer(x))
+
+                    //Get longest chain in network
+                    this.peers.forEach(e => {
+                        fetch("http://" + e + ":5500/chain")
+                            .then(response => response.json())
+                            .then(peerChain => {
+                                peerChain = this.parseChain(peerChain)
+                                this.receiveChain(peerChain, e)
+                            })
+                            .catch(()=>{
+                                console.log("Could not find peer: " + e)
+                                this.peers.splice(this.peers.indexOf(e), 1)
+                            })
+                    })
                 })
                 .catch(()=>{
                     console.log("Could not find peer: " + e)
+                    this.peers.splice(this.peers.indexOf(e), 1)
                 })
         })
         
-        //Get longest chain in network
-        this.peers.forEach(e => {
-            fetch("http://" + e + ":5500/chain")
-                .then(response => response.json())
-                .then(peerChain => {
-                    peerChain = this.parseChain(peerChain)
-                    this.receiveChain(peerChain, e)
-                })
-                .catch(()=>{
-                    console.log("Could not find peer: " + e)
-                })
-        })
+    }
+
+    shareBlock(peer) {
+        fetch("http://" + peer + "")
     }
 
     addBlock(block) {
@@ -186,6 +191,7 @@ class Blockchain {
         let balances = this.getBalances()
 
         for(let transaction in this.pendingTransactions) { 
+
             transaction = this.pendingTransactions[transaction]
 
             let senderAccount = balances.filter((e) => {return e.account == transaction.sender})[0]
@@ -197,6 +203,7 @@ class Blockchain {
             else {
                 balances.push({account: transaction.sender, amount: -transaction.amount})
             }
+
 
             let recipientAccount = balances.filter((e) => {return e.account == transaction.recipient})[0]
 
@@ -286,8 +293,9 @@ class Blockchain {
             parsedBlock.transactions = block.transactions
             parsedBlock.previousHash = block.previousHash
             parsedChain.push(parsedBlock)
-
         }
+
+        
 
         return(parsedChain)
     }
