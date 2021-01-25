@@ -1,3 +1,5 @@
+let { Peer } = require("../blockchain")
+
 let peerBox = document.querySelector("#peers")
 let newPeerInput = document.querySelector("#newPeer")
 let inputButton = document.querySelector("#peerButton")
@@ -15,19 +17,19 @@ fetch("/peers")
     })
 
 inputButton.onclick = () => {
-    let newPeer = newPeerInput.value
-    if(peers.indexOf(newPeer) != -1) { 
+    let newPeerAddress = newPeerInput.value
+    if(peers.indexOf(newPeerAddress) != -1) { 
         alert("This peer already exists")
         return
     }
 
-    let data = {"peer" : newPeer}
+    let data = JSON.stringify(new Peer(newPeerAddress))
     fetch("addPeer", {
         method: "POST",
         headers: {
             'Content-Type' : "application/json"
         },
-        body: JSON.stringify(data),
+        body: data,
     })
     .then(res => res.json())
     .then(peerList => {
@@ -48,5 +50,5 @@ inputButton.onclick = () => {
     })
     .catch(() => {alert("Could not connect to node")})
 
-    
+
 }

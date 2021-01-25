@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "test": "node src/main.js"
+    "test": "sudo nodemon src/main.js"
   },
   "author": "",
   "license": "ISC",

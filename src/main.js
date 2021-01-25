@@ -8,14 +8,8 @@ const bodyParser = require("body-parser")
 const pug = require("pug")
 
 //import blockchain classes
-let {Transaction, Block, Blockchain} = require("./blockchain")
+let {Peer, Transaction, Block, Blockchain} = require("./blockchain")
 let {generateKeys, signMessage, verifySignature} = require ("./ec")
-
-let zeltCoin = new Blockchain()
-
-//set app params
-app.use(bodyParser.json())
-app.set('view engine', 'pug')
 
 //get local ext. ip
 var address, ifaces = require('os').networkInterfaces();
@@ -23,8 +17,14 @@ for (var dev in ifaces) {
     ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address: undefined);
 }
 
-app.use(express.static('src/build'))
+let zeltCoin = new Blockchain(address)
 
+//set app params
+app.use(bodyParser.json())
+app.set('view engine', 'pug')
+ 
+app.use(express.static('src/build'))
+ 
 app.get("/", (req, res) => {
     res.send(`Blockchain Node hosted at ${address}`)
 })
@@ -68,15 +68,13 @@ app.get("/chainValidity", (req, res) => {
 })
 
 app.get("/peers", (req, res) => {
-    res.send(zeltCoin.peers)
+    res.send(zeltCoin.peers.map(x => x.address))
 })
 
 app.post("/addPeer", (req, res) => {
-    console.log(req.body)
-    let peer = req.body["peer"]
-    if(peer) {
-        zeltCoin.addPeer(peer)
-    }
+    let peer = Peer.parse(req.body)
+    console.log(peer)
+    zeltCoin.addPeer(peer)
     res.send(zeltCoin.peers)
 })
 
