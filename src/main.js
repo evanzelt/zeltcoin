@@ -11,13 +11,14 @@ const pug = require("pug")
 let {Peer, Transaction, Block, Blockchain} = require("./blockchain")
 let {generateKeys, signMessage, verifySignature} = require ("./ec")
 
-//get local ext. ip
-var address, ifaces = require('os').networkInterfaces();
-for (var dev in ifaces) {
-    ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address: undefined);
-}
+//get local ext. ip and initialize blockchain
+let zeltCoin
+const getIP = require('external-ip')();
+getIP((err, ip) => {
+    if (err) throw err
 
-let zeltCoin = new Blockchain(address)
+    zeltCoin = new Blockchain(ip)
+})
 
 //set app params
 app.use(bodyParser.json())
@@ -26,7 +27,7 @@ app.set('view engine', 'pug')
 app.use(express.static('src/build'))
  
 app.get("/", (req, res) => {
-    res.send(`Blockchain Node hosted at ${address}`)
+    res.send(`Blockchain Node hosted at ${zeltCoin.localPeer.address}`)
 })
 
 app.get("/chain", (req, res) => {
