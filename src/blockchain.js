@@ -147,7 +147,8 @@ class Blockchain {
         this.pendingTransactions = []
         this.difficulty = 4
         this.peers = []
-        this.localPeer = new Peer(address)
+        this.pendingPeers = []
+        this.localPeer = new Peer("192.168.1.180")
 
         //Genesis Block
         let genesisBlock = new Block(100, 1)
@@ -351,7 +352,8 @@ class Blockchain {
     //adds valid peers and resolves conflicts with them
     addPeer(peer) { 
         console.log("Attempting to add peer: " + peer.address)
-        if(this.peers.indexOf(peer) == -1) { 
+        if(this.peers.indexOf(peer) == -1 && this.pendingPeers.indexOf(peer) == -1) { 
+            this.pendingPeers.push(peer)
             peer.isValid()
                 .then(valid => {
                     if (valid) {
@@ -360,9 +362,12 @@ class Blockchain {
                         peer.addPeer(this.localPeer)
                     }   
                     else {
+                        console.log(this.peers)
                         console.log("Could not find peer: " + peer.address)
                         this.peers.splice(this.peers.indexOf(peer), 1)
                     }
+
+                    this.pendingPeers.splice(this.pendingPeers.indexOf(peer), 1)
                 })
         }
     }
