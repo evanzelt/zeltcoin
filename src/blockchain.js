@@ -352,7 +352,10 @@ class Blockchain {
     //adds valid peers and resolves conflicts with them
     addPeer(peer) { 
         console.log("Attempting to add peer: " + peer.address)
-        if(this.peers.indexOf(peer) == -1 && this.pendingPeers.indexOf(peer) == -1) { 
+
+    
+
+        if(this.peers.filter(e => e.address == peer.address).length == 0 && this.pendingPeers.filter(e => e.address == peer.address).length == 0) { 
             this.pendingPeers.push(peer)
             peer.isValid()
                 .then(valid => {
